@@ -1,127 +1,115 @@
 import random
-# фиксация рандомизатора,убрать в релизе!
 # random.seed(3)
 
-class warMoving:
-    """Действие, написанное на жетоне или сгенерированное иным способом"""
+
+class WarMoving:
+    """ Действие, написанное на жетоне или сгенерированное иным способом """
     typ = "-"
     value = 1
-    firstMove = False
+    first_move = False
 
-    def __init__(self, typ="-", value=1, firstMove=False):
+    def __init__(self, typ="-", value=1, first_move=False):
         self.typ = typ
         self.value = value
-        self.firstMove = firstMove
+        self.first_move = first_move
 
-    def tellTyp(self):
+    def tell_typ(self):
         return self.typ
 
-    def do(self, player, targetItemID, koef, toEnemy=True):
-        None
+    def do(self, player, target_item_id, koef, to_enemy=True):
+        pass
 
-    def extraMove(self, koef):
+    def extra_move(self, koef):
         return {"value": self.value * koef, "type": type(self)}
 
 
-class defenseMoving(warMoving):
-    """Защита от удара"""
+class DefenseMoving(WarMoving):
+    """ Защита от удара """
 
-    def __init__(self, value=1, firstMove=False):
-        self.typ = "defense"
-        self.value = value
-        self.firstMove = firstMove
+    def __init__(self, value=1, first_move=False):
+        super().__init__(typ="defense", value=value, first_move=first_move)
 
 
-class magicDamageMoving(warMoving):
-    """Нанесение урона"""
-    block = defenseMoving
+class MagicDamageMoving(WarMoving):
+    """ Нанесение урона """
+    block = DefenseMoving
 
-    def __init__(self, value=1, block=defenseMoving, firstMove=False):
-        self.typ = "magic_damage"
-        self.value = value
+    def __init__(self, value=1, block=DefenseMoving, first_move=False):
+        super().__init__(typ="magic_damage", value=value, first_move=first_move)
         self.block = block
-        self.firstMove = firstMove
 
-    def do(self, player, targetItemID, koef, toEnemy=True):
+    def do(self, player, target_item_id, koef, to_enemy=True):
         # player.getHit(self.value * koef)
         return {"value": self.value * koef, "type": self.block}
 
 
-class damageMoving(warMoving):
-    """Нанесение урона"""
-    block = defenseMoving
+class DamageMoving(WarMoving):
+    """ Нанесение урона """
+    block = DefenseMoving
 
-    def __init__(self, value=1, block=defenseMoving, firstMove=False):
-        self.typ = "damage"
-        self.value = value
+    def __init__(self, value=1, block=DefenseMoving, first_move=False):
+        super().__init__(typ="damage", value=value, first_move=first_move)
         self.block = block
-        self.firstMove = firstMove
 
-    def do(self, player, targetItemID, koef, toEnemy=True):
+    def do(self, player, target_item_id, koef, to_enemy=True):
         # player.getHit(self.value * koef)
         return {"value": self.value * koef, "type": self.block}
 
 
-class reverseMoving(warMoving):
+class ReverseMoving(WarMoving):
     """Переворот жетона"""
 
-    def __init__(self, firstMove=False):
-        self.typ = "reverse"
-        self.firstMove = firstMove
+    def __init__(self, first_move=False):
+        super().__init__(typ="reverse", first_move=first_move)
 
-    def do(self, player, targetItemID, koef, toEnemy=True):
-        if toEnemy:
-            player.getItemByID(targetItemID).randomState()
+    def do(self, player, target_item_id, koef, to_enemy=True):
+        if to_enemy:
+            player.get_item_by_id(target_item_id).random_state()
         else:
-            player.getItemByID(targetItemID).reverse()
+            player.get_item_by_id(target_item_id).reverse()
 
 
-class doubleMoving(warMoving):
-    """Удвоение жетона"""
+class DoubleMoving(WarMoving):
+    """ Удвоение жетона """
 
-    def __init__(self, firstMove=False):
-        self.typ = "double"
-        self.firstMove = firstMove
+    def __init__(self, first_move=False):
+        super().__init__(typ="double", first_move=first_move)
 
-    def do(self, player, targetItemID, koef, toEnemy=False):
-        player.getItemByID(targetItemID).koef *= 2
-
-
-class deleteMoving(warMoving):
-    """убрать жетон"""
-
-    def __init__(self, firstMove=False):
-        self.typ = "delete"
-        self.firstMove = firstMove
-
-    def do(self, player, targetItemID, koef, toEnemy=True):
-        player.getItemByID(targetItemID).active = False
+    def do(self, player, target_item_id, koef, to_enemy=False):
+        player.get_item_by_id(target_item_id).koef *= 2
 
 
-class actionMoving(warMoving):
+class DeleteMoving(WarMoving):
+    """ Убрать жетон """
+
+    def __init__(self, first_move=False):
+        super().__init__(typ="delete", first_move=first_move)
+
+    def do(self, player, target_item_id, koef, to_enemy=True):
+        player.get_item_by_id(target_item_id).active = False
+
+
+class ActionMoving(WarMoving):
     """Особое действие"""
 
-    def __init__(self, value=1, firstMove=False):
-        self.typ = "action"
-        self.value = value
-        self.firstMove = firstMove
+    def __init__(self, value=1, first_move=False):
+        super().__init__(typ="action", value=value, first_move=first_move)
 
-    def do(self, player, targetItemID, koef, toEnemy=False):
+    def do(self, player, target_item_id, koef, to_enemy=False):
         return self.value * koef
 
 
-class activateMoving(warMoving):
+class ActivateMoving(WarMoving):
     """Особое действие"""
 
-    def __init__(self, firstMove=False):
-        self.typ = "activate"
-        self.firstMove = firstMove
+    def __init__(self, first_move=False):
+        super().__init__(typ="activate", first_move=first_move)
 
-    def do(self, player, targetItemID, koef, toEnemy=True):
-        player.getItemByID(targetItemID).active = True
+    def do(self, player, target_item_id, koef, to_enemy=True):
+        player.get_item_by_id(target_item_id).active = True
 
 
-class warItem:
+class WarItem:
     """Игровой жетон"""
     item = [None, None]
     state = 0
@@ -130,7 +118,7 @@ class warItem:
 
     def __init__(self, side1, side2):
         self.item = [side1, side2]
-        self.randomState()
+        self.random_state()
 
     def deactivate(self):
         self.active = False
@@ -138,143 +126,146 @@ class warItem:
     def activate(self):
         self.active = True
 
-    def setState(self, state):
-        """Установить сторону жетона"""
+    def set_state(self, state):
+        """ Установить сторону жетона """
         self.state = bool(state)
 
-    def randomState(self):
-        """Переброс/бросок жетона"""
+    def random_state(self):
+        """ Переброс/бросок жетона """
         self.state = random.randint(0, 1)
 
-    def getItemState(self):
+    def get_item_state(self):
         return self.item[self.state]
 
     def reverse(self):
-        """перевернуть жетон"""
+        """ Перевернуть жетон """
         self.state = not self.state
 
-    def do(self, player, targetItemID, toEnemy=True):
+    def do(self, player, targetItemID, to_enemy=True):
         if not self.active:
             return None
         else:
-            return self.item[self.state].do(player, targetItemID, self.koef, toEnemy=toEnemy)
+            return self.item[self.state].do(player, targetItemID, self.koef, to_enemy=to_enemy)
 
-    def extraMove(self):
-        """Действие в ответ (защита от удара)"""
+    def extra_move(self):
+        """ Действие в ответ (защита от удара) """
         self.active = False
-        return self.item[self.state].extraMove(self.koef)
+        return self.item[self.state].extra_move(self.koef)
 
 
 armourItems = {
-    'a8': warItem(defenseMoving(), warMoving(firstMove=True)),
-    'a9': warItem(warMoving(), reverseMoving()),
-    'a10': warItem(defenseMoving(), warMoving()),
-    'a11': warItem(magicDamageMoving(firstMove=True), actionMoving(2)),
-    'b9': warItem(defenseMoving(), actionMoving(firstMove=True)),
-    'b10': warItem(defenseMoving(2), damageMoving()),
-    'b11': warItem(actionMoving(), defenseMoving(2)),
-    'c8': warItem(actionMoving(), reverseMoving()),
-    'c9': warItem(defenseMoving(), warMoving(firstMove=True)),
-    'c10': warItem(magicDamageMoving(), doubleMoving()),
-    'c11': warItem(doubleMoving(firstMove=True), actionMoving()),
-    'c12': warItem(magicDamageMoving(), defenseMoving(2)),
+    'a8': WarItem(DefenseMoving(), WarMoving(first_move=True)),
+    'a9': WarItem(WarMoving(), ReverseMoving()),
+    'a10': WarItem(DefenseMoving(), WarMoving()),
+    'a11': WarItem(MagicDamageMoving(first_move=True), ActionMoving(2)),
+    'b9': WarItem(DefenseMoving(), ActionMoving(first_move=True)),
+    'b10': WarItem(DefenseMoving(2), DamageMoving()),
+    'b11': WarItem(ActionMoving(), DefenseMoving(2)),
+    'c8': WarItem(ActionMoving(), ReverseMoving()),
+    'c9': WarItem(DefenseMoving(), WarMoving(first_move=True)),
+    'c10': WarItem(MagicDamageMoving(), DoubleMoving()),
+    'c11': WarItem(DoubleMoving(first_move=True), ActionMoving()),
+    'c12': WarItem(MagicDamageMoving(), DefenseMoving(2)),
 }
 weaponItems = {
-    'a3': warItem(damageMoving(), warMoving()),
-    'a4': warItem(warMoving(), damageMoving(2)),
-    'a5': warItem(doubleMoving(), actionMoving(2)),
-    'a6': warItem(actionMoving(firstMove=True), damageMoving(2)),
-    'a7': warItem(actionMoving(), magicDamageMoving(2, firstMove=True)),
-    'b4': warItem(warMoving(), damageMoving(1)),
-    'b5': warItem(warMoving(firstMove=True), damageMoving(1)),
-    'b6': warItem(actionMoving(firstMove=True), damageMoving(1)),
-    'b7': warItem(actionMoving(firstMove=True), magicDamageMoving(1)),
-    'b8': warItem(reverseMoving(), damageMoving(3)),
-    'c3': warItem(actionMoving(), magicDamageMoving(1)),
-    'c4': warItem(damageMoving(), reverseMoving()),
-    'c5': warItem(defenseMoving(), damageMoving(firstMove=True)),
-    'c6': warItem(damageMoving(), actionMoving(2)),
-    'c7': warItem(damageMoving(2, firstMove=True), defenseMoving(1)),
-    'd4': warItem(damageMoving(), reverseMoving(firstMove=True)),
+    'a3': WarItem(DamageMoving(), WarMoving()),
+    'a4': WarItem(WarMoving(), DamageMoving(2)),
+    'a5': WarItem(DoubleMoving(), ActionMoving(2)),
+    'a6': WarItem(ActionMoving(first_move=True), DamageMoving(2)),
+    'a7': WarItem(ActionMoving(), MagicDamageMoving(2, first_move=True)),
+    'b4': WarItem(WarMoving(), DamageMoving(1)),
+    'b5': WarItem(WarMoving(first_move=True), DamageMoving(1)),
+    'b6': WarItem(ActionMoving(first_move=True), DamageMoving(1)),
+    'b7': WarItem(ActionMoving(first_move=True), MagicDamageMoving(1)),
+    'b8': WarItem(ReverseMoving(), DamageMoving(3)),
+    'c3': WarItem(ActionMoving(), MagicDamageMoving(1)),
+    'c4': WarItem(DamageMoving(), ReverseMoving()),
+    'c5': WarItem(DefenseMoving(), DamageMoving(first_move=True)),
+    'c6': WarItem(DamageMoving(), ActionMoving(2)),
+    'c7': WarItem(DamageMoving(2, first_move=True), DefenseMoving(1)),
+    'd4': WarItem(DamageMoving(), ReverseMoving(first_move=True)),
 }
 backpackItems = {
-    'a1': warItem(warMoving(), reverseMoving(firstMove=True)),
-    'a2': warItem(magicDamageMoving(), actionMoving(1)),
-    'b1': warItem(magicDamageMoving(), reverseMoving()),
-    'b2': warItem(actionMoving(), reverseMoving()),
-    'b3': warItem(damageMoving(), reverseMoving()),
-    'c1': warItem(doubleMoving(), actionMoving(1)),
-    'c2': warItem(actionMoving(2, firstMove=True), doubleMoving()),
+    'a1': WarItem(WarMoving(), ReverseMoving(first_move=True)),
+    'a2': WarItem(MagicDamageMoving(), ActionMoving(1)),
+    'b1': WarItem(MagicDamageMoving(), ReverseMoving()),
+    'b2': WarItem(ActionMoving(), ReverseMoving()),
+    'b3': WarItem(DamageMoving(), ReverseMoving()),
+    'c1': WarItem(DoubleMoving(), ActionMoving(1)),
+    'c2': WarItem(ActionMoving(2, first_move=True), DoubleMoving()),
 }
 heroesItems = {
     'Korbin': [
-        warItem(damageMoving(2), actionMoving()),
-        warItem(damageMoving(firstMove=True), defenseMoving()),
-        warItem(reverseMoving(), damageMoving()),
+        WarItem(DamageMoving(2), ActionMoving()),
+        WarItem(DamageMoving(first_move=True), DefenseMoving()),
+        WarItem(ReverseMoving(), DamageMoving()),
     ],
     'Laurel': [
-        warItem(damageMoving(2), actionMoving()),
-        warItem(defenseMoving(), damageMoving(firstMove=True)),
-        warItem(actionMoving(firstMove=True), reverseMoving()),
+        WarItem(DamageMoving(2), ActionMoving()),
+        WarItem(DefenseMoving(), DamageMoving(first_move=True)),
+        WarItem(ActionMoving(first_move=True), ReverseMoving()),
     ],
     'Lissa': [
-        warItem(damageMoving(2), defenseMoving()),
-        warItem(magicDamageMoving(firstMove=True), reverseMoving()),
-        warItem(reverseMoving(firstMove=True), actionMoving(firstMove=True)),
+        WarItem(DamageMoving(2), DefenseMoving()),
+        WarItem(MagicDamageMoving(first_move=True), ReverseMoving()),
+        WarItem(ReverseMoving(first_move=True), ActionMoving(first_move=True)),
     ],
     'Hotorn': [
-        warItem(damageMoving(2), defenseMoving()),
-        warItem(damageMoving(firstMove=True), reverseMoving()),
-        warItem(damageMoving(firstMove=True), warMoving()),
+        WarItem(DamageMoving(2), DefenseMoving()),
+        WarItem(DamageMoving(first_move=True), ReverseMoving()),
+        WarItem(DamageMoving(first_move=True), WarMoving()),
     ],
     'Mok': [
-        warItem(magicDamageMoving(2), doubleMoving()),
-        warItem(reverseMoving(firstMove=True), defenseMoving()),
-        warItem(actionMoving(firstMove=True), damageMoving()),
+        WarItem(MagicDamageMoving(2), DoubleMoving()),
+        WarItem(ReverseMoving(first_move=True), DefenseMoving()),
+        WarItem(ActionMoving(first_move=True), DamageMoving()),
     ],
     'Torn': [
-        warItem(actionMoving(2), magicDamageMoving()),
-        warItem(doubleMoving(), magicDamageMoving(firstMove=True)),
-        warItem(reverseMoving(firstMove=True), magicDamageMoving()),
+        WarItem(ActionMoving(2), MagicDamageMoving()),
+        WarItem(DoubleMoving(), MagicDamageMoving(first_move=True)),
+        WarItem(ReverseMoving(first_move=True), MagicDamageMoving()),
     ],
 }
 
 mobBasic = [
-    warItem(damageMoving(), defenseMoving()),
-    warItem(damageMoving(), reverseMoving()),
-    warItem(actionMoving(), damageMoving(firstMove=True)),
-    warItem(warMoving(firstMove=True), damageMoving()),
-    warItem(warMoving(firstMove=True), doubleMoving()),
+    WarItem(DamageMoving(), DefenseMoving()),
+    WarItem(DamageMoving(), ReverseMoving()),
+    WarItem(ActionMoving(), DamageMoving(first_move=True)),
+    WarItem(WarMoving(first_move=True), DamageMoving()),
+    WarItem(WarMoving(first_move=True), DoubleMoving()),
 ]
 
 mobStrong = mobBasic + [
-    warItem(actionMoving(firstMove=True), damageMoving(2)),
+    WarItem(ActionMoving(first_move=True), DamageMoving(2)),
 ]
 
 Vorakesh = mobStrong + [
-    warItem(actionMoving(2), damageMoving())
+    WarItem(ActionMoving(2), DamageMoving())
 ]
 Morgat = mobStrong + [
-    warItem(damageMoving(2), actionMoving())
+    WarItem(DamageMoving(2), ActionMoving())
 ]
 
 
-class action():
+class Action:
+    """ Базовый класс действий """
     minPoints = 1
     hero = False
     active = True
 
-    def __init__(self, minPoints=1):
-        self.minPoints = minPoints
+    def __init__(self, min_points=1):
+        self.minPoints = min_points
 
-    def setHero(self, hero):
+    def set_hero(self, hero):
         self.hero = hero
 
-    def do(self, itemIDs=[], actionPoints=1):
-        if actionPoints >= self.minPoints:
-            for itemID in itemIDs:
-                self.hero.getItemByID(itemID).deactivate()
-            return self.calculate(itemIDs, actionPoints)
+    def do(self, item_ids=None, action_points=1):
+        if not item_ids:
+            item_ids = []
+        if action_points >= self.minPoints:
+            for itemID in item_ids:
+                self.hero.get_item_by_id(itemID).deactivate()
+            return self.calculate(item_ids, action_points)
 
     def deactivate(self):
         self.active = False
@@ -282,60 +273,67 @@ class action():
     def activate(self):
         self.active = True
 
-    def calculate(self, itemIDs, actionPoints):
-        None
+    def calculate(self, itemIDs, action_points):
+        pass
 
     # def do(self, heroTarget, actionPoints=1, itemIDs=[]):
     #     None
 
 
-class LaurelNative(action):
+class LaurelNative(Action):
     minPoints = 1
 
-    def __init__(self, minPoints=1):
-        self.minPoints = minPoints
+    def __init__(self, min_points=1):
+        super().__init__(min_points)
 
-    def calculate(self, itemIDs=[], actionPoints=1):
+    def calculate(self, itemIDs=None, action_points=1):
+        if not itemIDs:
+            itemIDs = []
         if len(itemIDs) > 0:
             itemID = itemIDs[0]
         else:
-            return None
-        self.hero.getItemByID(itemID).randomState()
-        self.hero.getItemByID(itemID).activate()
+            return
+        self.hero.get_item_by_id(itemID).random_state()
+        self.hero.get_item_by_id(itemID).activate()
 
 
-class MokNative(action):
+class MokNative(Action):
     minPoints = 2
 
-    def calculate(self, itemIDs=[], actionPoints=1):
-        value = self.hero.checkCardsBlock(max_cards=self.hero.getWisdom()+1, count=True)[0]
-        return {"value": value, "type": defenseMoving}
+    def calculate(self, item_ids=None, action_points=1):
+        item_ids = item_ids or []
+        value = self.hero.check_card_block(max_cards=self.hero.get_wisdom + 1, count=True)[0]
+        return {"value": value, "type": DefenseMoving}
 
 
-class HotornNative(action):
+class HotornNative(Action):
     minPoints = 0
 
-    def __init__(self, minPoints=0):
-        self.minPoints = minPoints
+    def __init__(self, min_points=0):
+        super().__init__(min_points)
 
-    def calculate(self, itemIDs=[], actionPoints=0):
-        for itemID in itemIDs:
-            self.hero.getItemByID(itemID).randomState()
-            self.hero.getItemByID(itemID).activate()
+    def calculate(self, item_ids=None, action_points=0):
+        item_ids = item_ids or []
+        for itemID in item_ids:
+            self.hero.get_item_by_id(itemID).random_state()
+            self.hero.get_item_by_id(itemID).activate()
         # return {"value": value, "type": defenseMoving}
         None
 
 
-class KorbinNative(action):
+class KorbinNative(Action):
     minPoints = 1
 
-    def calculate(self, itemIDs=[], actionPoints=0):
-        return {"value": actionPoints, "type": actionMoving}
+    def calculate(self, item_ids=None, action_points=0):
+        item_ids = item_ids or []
+        return {"value": action_points, "type": ActionMoving}
 
     def block(self, item):
-        None
+        pass
 
-class skill():
+
+class Skill:
+    """ Применение навыка """
     cost = {'fight': 0, 'adventure': 0, 'mail': 0, 'any': 0}
     success = False
     active = True
@@ -350,71 +348,72 @@ class skill():
     def disable(self):
         self.active = False
 
+
 skills = [
-    {'id': 1, 'card': skill(fight=1)},
-    {'id': 2, 'card': skill(fight=1, success=True)},
-    {'id': 3, 'card': skill(fight=1)},
-    {'id': 4, 'card': skill(fight=1)},
-    {'id': 5, 'card': skill(fight=1)},
-    {'id': 6, 'card': skill(fight=1)},
-    {'id': 7, 'card': skill(fight=1)},
-    {'id': 8, 'card': skill(fight=1, success=True)},
-    {'id': 9, 'card': skill(fight=1)},
-    {'id': 10, 'card': skill(fight=1)},
-    {'id': 11, 'card': skill(fight=1)},
-    {'id': 12, 'card': skill(fight=1)},
-    {'id': 13, 'card': skill(fight=1)},
-    {'id': 14, 'card': skill(fight=1)},
-    {'id': 15, 'card': skill(fight=1, success=True)},
-    {'id': 16, 'card': skill(fight=1, success=True)},
-    {'id': 17, 'card': skill(fight=1, success=True)},
-    {'id': 18, 'card': skill(fight=1, success=True)},
-    {'id': 19, 'card': skill(fight=1)},
-    {'id': 20, 'card': skill(fight=1, success=True)},
-    {'id': 21, 'card': skill(fight=1)},
-    {'id': 22, 'card': skill(fight=1)},
-    {'id': 23, 'card': skill(fight=1)},
-    {'id': 24, 'card': skill(fight=1)},
-    {'id': 25, 'card': skill(fight=1)},
-    {'id': 26, 'card': skill(fight=1)},
-    {'id': 27, 'card': skill(fight=1)},
-    {'id': 28, 'card': skill(fight=1)},
-    {'id': 29, 'card': skill(fight=1)},
-    {'id': 30, 'card': skill(fight=1, success=True)},
-    {'id': 31, 'card': skill(fight=1, success=True)},
-    {'id': 32, 'card': skill(fight=1)},
-    {'id': 33, 'card': skill(fight=1)},
-    {'id': 34, 'card': skill(fight=1)},
-    {'id': 35, 'card': skill(fight=1)},
-    {'id': 36, 'card': skill(fight=1)},
-    {'id': 37, 'card': skill(fight=1)},
-    {'id': 38, 'card': skill(fight=1)},
-    {'id': 39, 'card': skill(fight=1)},
-    {'id': 40, 'card': skill(fight=1)},
-    {'id': 41, 'card': skill(fight=1)},
-    {'id': 42, 'card': skill(fight=1)},
-    {'id': 43, 'card': skill(fight=1)},
-    {'id': 44, 'card': skill(fight=1)},
-    {'id': 45, 'card': skill(fight=1)},
-    {'id': 46, 'card': skill(fight=1)},
-    {'id': 47, 'card': skill(fight=1)},
-    {'id': 48, 'card': skill(fight=1)},
-    {'id': 49, 'card': skill(fight=1)},
-    {'id': 50, 'card': skill(fight=1)},
-    {'id': 51, 'card': skill(fight=1)},
-    {'id': 52, 'card': skill(fight=1)},
-    {'id': 53, 'card': skill(fight=1)},
-    {'id': 54, 'card': skill(fight=1)},
-    {'id': 55, 'card': skill(fight=1)},
-    {'id': 56, 'card': skill(fight=1)},
-    {'id': 57, 'card': skill(fight=1)},
-    {'id': 58, 'card': skill(fight=1, success=True)},
-    {'id': 59, 'card': skill(fight=1)},
-    {'id': 60, 'card': skill(fight=1)},
+    {'id': 1, 'card': Skill(fight=1)},
+    {'id': 2, 'card': Skill(fight=1, success=True)},
+    {'id': 3, 'card': Skill(fight=1)},
+    {'id': 4, 'card': Skill(fight=1)},
+    {'id': 5, 'card': Skill(fight=1)},
+    {'id': 6, 'card': Skill(fight=1)},
+    {'id': 7, 'card': Skill(fight=1)},
+    {'id': 8, 'card': Skill(fight=1, success=True)},
+    {'id': 9, 'card': Skill(fight=1)},
+    {'id': 10, 'card': Skill(fight=1)},
+    {'id': 11, 'card': Skill(fight=1)},
+    {'id': 12, 'card': Skill(fight=1)},
+    {'id': 13, 'card': Skill(fight=1)},
+    {'id': 14, 'card': Skill(fight=1)},
+    {'id': 15, 'card': Skill(fight=1, success=True)},
+    {'id': 16, 'card': Skill(fight=1, success=True)},
+    {'id': 17, 'card': Skill(fight=1, success=True)},
+    {'id': 18, 'card': Skill(fight=1, success=True)},
+    {'id': 19, 'card': Skill(fight=1)},
+    {'id': 20, 'card': Skill(fight=1, success=True)},
+    {'id': 21, 'card': Skill(fight=1)},
+    {'id': 22, 'card': Skill(fight=1)},
+    {'id': 23, 'card': Skill(fight=1)},
+    {'id': 24, 'card': Skill(fight=1)},
+    {'id': 25, 'card': Skill(fight=1)},
+    {'id': 26, 'card': Skill(fight=1)},
+    {'id': 27, 'card': Skill(fight=1)},
+    {'id': 28, 'card': Skill(fight=1)},
+    {'id': 29, 'card': Skill(fight=1)},
+    {'id': 30, 'card': Skill(fight=1, success=True)},
+    {'id': 31, 'card': Skill(fight=1, success=True)},
+    {'id': 32, 'card': Skill(fight=1)},
+    {'id': 33, 'card': Skill(fight=1)},
+    {'id': 34, 'card': Skill(fight=1)},
+    {'id': 35, 'card': Skill(fight=1)},
+    {'id': 36, 'card': Skill(fight=1)},
+    {'id': 37, 'card': Skill(fight=1)},
+    {'id': 38, 'card': Skill(fight=1)},
+    {'id': 39, 'card': Skill(fight=1)},
+    {'id': 40, 'card': Skill(fight=1)},
+    {'id': 41, 'card': Skill(fight=1)},
+    {'id': 42, 'card': Skill(fight=1)},
+    {'id': 43, 'card': Skill(fight=1)},
+    {'id': 44, 'card': Skill(fight=1)},
+    {'id': 45, 'card': Skill(fight=1)},
+    {'id': 46, 'card': Skill(fight=1)},
+    {'id': 47, 'card': Skill(fight=1)},
+    {'id': 48, 'card': Skill(fight=1)},
+    {'id': 49, 'card': Skill(fight=1)},
+    {'id': 50, 'card': Skill(fight=1)},
+    {'id': 51, 'card': Skill(fight=1)},
+    {'id': 52, 'card': Skill(fight=1)},
+    {'id': 53, 'card': Skill(fight=1)},
+    {'id': 54, 'card': Skill(fight=1)},
+    {'id': 55, 'card': Skill(fight=1)},
+    {'id': 56, 'card': Skill(fight=1)},
+    {'id': 57, 'card': Skill(fight=1)},
+    {'id': 58, 'card': Skill(fight=1, success=True)},
+    {'id': 59, 'card': Skill(fight=1)},
+    {'id': 60, 'card': Skill(fight=1)},
 ]
 
 
-class skill_block():
+class SkillBlock():
     state = skills
     disabled_cards = []
 
@@ -424,28 +423,28 @@ class skill_block():
     def mix(self):
         random.shuffle(self.state)
 
-    def getCard(self):
+    def get_card(self):
         card = self.state.pop()
         return card
 
-    def getSize(self):
+    def get_size(self):
         return len(self.state)
 
-    def throwCard(self, card):
+    def throw_card(self, card):
         self.disabled_cards.append(card)
 
     def check(self, max_cards=1, count=False):
         checked_cards = []
         value = False
         for i in range(max_cards):
-            card = self.getCard()
+            card = self.get_card()
             checked_cards.append(card)
-            self.throwCard(card)
+            self.throw_card(card)
             if card["card"].success:
                 if not count:
                     return True, checked_cards
                 else:
                     value += 1
-        print("Вытащены карты ", checked_cards)
+        print(f"Вытащены карты {checked_cards}")
         return value, checked_cards
 
